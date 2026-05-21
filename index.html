@@ -103,6 +103,46 @@
       border-radius: 5px;
     }
 
+    .auth-section {
+      background: #fff8f3;
+    }
+
+    .auth-form {
+      max-width: 420px;
+      margin: 0 auto;
+      display: grid;
+      gap: 15px;
+      text-align: left;
+    }
+
+    .auth-form label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .auth-form input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .auth-form .message {
+      min-height: 24px;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .message.error {
+      color: #b71c1c;
+    }
+
+    .message.success {
+      color: #1b5e20;
+    }
+
     .section {
       padding: 50px 20px;
       text-align: center;
@@ -162,6 +202,7 @@
     <a href="#" data-key="menu">Меню</a>
     <a href="#" data-key="about">О нас</a>
     <a href="#" data-key="contacts">Контакты</a>
+    <a href="#register" data-key="register">Регистрация</a>
     <div class="lang-switcher">
       <button class="lang-btn active" data-lang="ru">РУ</button>
       <button class="lang-btn" data-lang="en">EN</button>
@@ -175,6 +216,20 @@
     <p>Начни утро с идеального вкуса</p>
     <a href="#" class="btn">Посмотреть меню</a>
   </div>
+</section>
+
+<section id="register" class="section auth-section">
+  <h2 data-key="register_title">Регистрация клиента</h2>
+  <form id="register-form" class="auth-form">
+    <label for="email" data-key="register_email">Email</label>
+    <input type="email" id="email" placeholder="example@mail.com" required />
+
+    <label for="password" data-key="register_password">Пароль</label>
+    <input type="password" id="password" placeholder="Минимум 6 символов" minlength="6" required />
+
+    <button type="submit" class="btn" data-key="register_button">Зарегистрироваться</button>
+    <p id="register-message" class="message"></p>
+  </form>
 </section>
 
 <section class="section">
@@ -204,12 +259,23 @@
   <p>© 2026 Aroma Coffee</p>
 </footer>
 
-<script>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+const SUPABASE_URL = 'https://jkdkyuuujowfnsqklroh.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_aPqlm00ZERStRzgPFsWDFQ_YQMrb0oM';
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 const translations = {
   ru: {
     menu: 'Меню',
     about: 'О нас',
     contacts: 'Контакты',
+    register: 'Регистрация',
+    register_title: 'Регистрация клиента',
+    register_email: 'Email',
+    register_password: 'Пароль',
+    register_button: 'Зарегистрироваться',
     hero_title: 'Свежий кофе каждый день',
     hero_subtitle: 'Начни утро с идеального вкуса',
     hero_btn: 'Посмотреть меню',
@@ -227,6 +293,11 @@ const translations = {
     menu: 'Menu',
     about: 'About',
     contacts: 'Contacts',
+    register: 'Register',
+    register_title: 'Client Registration',
+    register_email: 'Email',
+    register_password: 'Password',
+    register_button: 'Register',
     hero_title: 'Fresh Coffee Every Day',
     hero_subtitle: 'Start your morning with perfect taste',
     hero_btn: 'View Menu',
@@ -290,7 +361,41 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
     setLanguage(btn.dataset.lang);
   });
 });
+const registerForm = document.getElementById('register-form');
+const registerMessage = document.getElementById('register-message');
 
+registerForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  if (!email || !password) {
+    registerMessage.textContent = 'Введите email и пароль.';
+    registerMessage.className = 'message error';
+    return;
+  }
+
+  registerMessage.textContent = 'Отправка...';
+  registerMessage.className = 'message';
+
+  try {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+
+    if (error) {
+      registerMessage.textContent = error.message;
+      registerMessage.className = 'message error';
+      return;
+    }
+
+    registerMessage.textContent = 'Проверьте почту для подтверждения регистрации.';
+    registerMessage.className = 'message success';
+    registerForm.reset();
+  } catch (err) {
+    registerMessage.textContent = 'Ошибка при регистрации. Попробуйте позже.';
+    registerMessage.className = 'message error';
+  }
+});
 // Initialize with saved language
 setLanguage(currentLang);
 </script>
