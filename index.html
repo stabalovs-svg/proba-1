@@ -380,7 +380,10 @@ registerForm.addEventListener('submit', async (event) => {
   registerMessage.className = 'message';
 
   try {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp(
+      { email, password },
+      { emailRedirectTo: 'https://stabalovs-svg.github.io/proba-1' }
+    );
 
     if (error) {
       registerMessage.textContent = error.message;
