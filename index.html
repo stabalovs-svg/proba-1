@@ -377,28 +377,30 @@ registerForm.addEventListener('submit', async (event) => {
     return;
   }
 
-  registerMessage.textContent = 'Отправка...';
-  registerMessage.className = 'message';
+registerMessage.textContent = 'Отправка...';
+registerMessage.className = 'message';
 
-  try {
-    const { data, error } = await supabase.auth.signUp(
-      { email, password },
-      { emailRedirectTo: EMAIL_REDIRECT_TO }
-    );
+const EMAIL_REDIRECT_TO = window.location.origin + '/proba-1';
 
-    if (error) {
-      registerMessage.textContent = error.message;
-      registerMessage.className = 'message error';
-      return;
-    }
+try {
+  const { data, error } = await supabase.auth.signUp(
+    { email, password },
+    { redirectTo: EMAIL_REDIRECT_TO }
+  );
 
-    registerMessage.textContent = 'Проверьте почту для подтверждения регистрации.';
-    registerMessage.className = 'message success';
-    registerForm.reset();
-  } catch (err) {
-    registerMessage.textContent = 'Ошибка при регистрации. Попробуйте позже.';
+  if (error) {
+    registerMessage.textContent = error.message;
     registerMessage.className = 'message error';
+    return;
   }
+
+  registerMessage.textContent = 'Проверьте почту для подтверждения регистрации.';
+  registerMessage.className = 'message success';
+  registerForm.reset();
+} catch (err) {
+  registerMessage.textContent = 'Ошибка при регистрации. Попробуйте позже.';
+  registerMessage.className = 'message error';
+}
 });
 // Initialize with saved language
 setLanguage(currentLang);
