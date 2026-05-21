@@ -265,6 +265,7 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const SUPABASE_URL = 'https://jkdkyuuujowfnsqklroh.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_aPqlm00ZERStRzgPFsWDFQ_YQMrb0oM';
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const EMAIL_REDIRECT_TO = window.location.origin + '/proba-1';
 
 const translations = {
   ru: {
@@ -382,7 +383,7 @@ registerForm.addEventListener('submit', async (event) => {
   try {
     const { data, error } = await supabase.auth.signUp(
       { email, password },
-      { emailRedirectTo: 'https://stabalovs-svg.github.io/proba-1' }
+      { emailRedirectTo: EMAIL_REDIRECT_TO }
     );
 
     if (error) {
