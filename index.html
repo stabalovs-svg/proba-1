@@ -383,10 +383,10 @@ registerMessage.className = 'message';
 const EMAIL_REDIRECT_TO = window.location.origin + '/proba-1';
 
 try {
-  const { data, error } = await supabase.auth.signUp(
-    { email, password },
-    { redirectTo: EMAIL_REDIRECT_TO }
-  );
+ const { data, error } = await supabase.auth.signUp(
+  { email, password },
+  { redirectTo: EMAIL_REDIRECT_TO }
+);
 
   if (error) {
     registerMessage.textContent = error.message;
